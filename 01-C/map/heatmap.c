@@ -1,67 +1,59 @@
 ﻿#include <stdio.h>
+#include <stdbool.h>
 
 // Definieren Sie ein 3x3-Array Namens map, das Werte vom Typ double enthält
+const int X = 3;
+const int Y = 3;
+// static double map[X][Y];
 static double map[3][3];
+
+bool valid_map(int x, int y){
+	return (x >= 0 && x < X && y >= 0 && y < Y);
+}
+
+int get_map_value(int x, int y){
+	if (valid_map(x,y)){
+		return map[x][y];
+	}
+	return 0;
+}
 
 // Die Funktion set_temperature soll an Position [x, y] den Wert dir in das Array map eintragen
 // Überprüfen Sie x und y, um mögliche Arrayüberläufe zu verhindern
-void set_temperature (int x, int y, double temperature)
-{
-if (x < 0 || x >= 3 || y < 0 || y >= 3 )
-{
-	printf("Koordinate out of bounce (%d, %d)\n", y, x);
+void set_temperature (int x, int y, double temperature){
+	if (valid_map(x,y)){
+		map[x][y] = temperature;
+	}
 	return;
-}	
-	map[y][x] = temperature;
-
 }
 
 // Die Funktion show_map soll das Array in Form einer 3x3-Matrix ausgeben
-void show_map (void)
-{
-	for(int y = 2; y >= 0; y-- )
-	{	
-	
-		for(int x = 0; x < 3; x++)
-		{
-			printf("%.2f\t", map[y][x]);
+void show_map (void){
+	for(int y = (Y-1); y >= 0; y-- ){
+		for(int x = 0; x <= (X-1); x++){
+			printf("%.2lf\t", map[x][y]);
 		}
 		printf("\n");
 	}
 	printf("\n");
-
+	return;
 }
 
 // Die Funktion average_value soll an Position [x, y] den Durchschnitt der 8 umgebenen
 // Temperaturen in das Array map eintragen. 
 // Für Werte außerhalb des Arrays soll der Wert 0 angenommen werden.
 // Verwenden Sie hierfür auch die Funktion set_temperature.
-void set_average (int x, int y)
-{
-  double sum = 0.0;
-  int count = 0;
-  double average = 0.0;
+void set_average (int x, int y){
+	double sum = 0.0;
 
-  for(int offsetY = -1; offsetY <=1 ; offsetY++)
-  {
-	for(int offsetX = -1; offsetX <=1; offsetX++)
-	{
-	int neighborX= x + offsetX;
-	int neighborY = y + offsetY;
-
-	if(neighborX < 0 || neighborX >=3 || neighborY < 0 || neighborY >=3)
-	{
-		count++;
-		continue;
+	for(int a = y - 1; a <= y + 1; a++){
+ 		for(int b = x - 1; b <=x + 1; b++){
+			sum += get_map_value(a,b);
+		}
 	}
-	sum += map[neighborY][neighborX];
-	count++;
-	}
-  }
-  sum += map[y][x];
-  average = sum / count;
-  set_temperature(x, y, average);
-
+	sum += get_map_value(x,y);
+	set_temperature(x, y, (sum / 9) );
+ 	return;
 }
 
 // In dieser Funktion darf nichts verändert werden!
@@ -85,12 +77,12 @@ int main (void)
 	set_temperature(1, 1, 50.5);
 
 	show_map();
-  
-  set_average(0,0);
-  set_average(2,0);
-  set_average(1,2);
-  
-  show_map();
+
+	set_average(0,0);
+	set_average(2,0);
+	set_average(1,2);
+
+	show_map();
 
 	return 0;
 }
