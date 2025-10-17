@@ -1,7 +1,7 @@
 ﻿#include <stdio.h>
 
 // Definieren Sie ein 3x3-Array Namens map, das Werte vom Typ double enthält
-static double map[3][3] = {0.0};
+static double map[3][3];
 
 // Die Funktion set_temperature soll an Position [x, y] den Wert dir in das Array map eintragen
 // Überprüfen Sie x und y, um mögliche Arrayüberläufe zu verhindern
