@@ -33,7 +33,7 @@ void change_pointer(int** zeiger_zeiger)
   // Setzen Sie den Zeiger, auf den der Zeiger zeigt, auf die Adresse von "globaler_wert", bzw.
   // lassen Sie den Zeiger "zeiger", der hier übergeben wurde, auf die Adresse von "globaler_wert"
   // zeigen.
-  **zeiger_zeiger = &globaler_wert;
+  *zeiger_zeiger = &globaler_wert;
 }
 
 // Man kann Arrays in Funktionsköpfe verwenden:
@@ -55,7 +55,7 @@ void operator_precedence()
   // Entfernen Sie alle unnötigen und falschen Klammern, und fügen Sie fehlende Klammern hinzu.
   // Betrachten Sie hierfür den Begriff "Operator Precedence".
   printf("Das erste Array-Element plus 1: %d.\n", *(zeiger_array[1]) + 1);
-  printf("test %p.\n", *zeiger_array);
+
   printf("Das zweite Array-Element: %d.\n", *(zeiger_array[1] + 1));
   printf("Das dritte Array-Element minus 1: %d.\n", **zeiger_array-1);
   printf("Das vierte Array-Element: %d.\n", *(*zeiger_array+1));
