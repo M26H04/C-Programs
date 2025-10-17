@@ -11,7 +11,7 @@ bool valid_map(int x, int y){
 	return (x >= 0 && x < X && y >= 0 && y < Y);
 }
 
-int get_map_value(int x, int y){
+double get_map_value(int x, int y){
 	if (valid_map(x,y)){
 		return map[x][y];
 	}
@@ -46,8 +46,8 @@ void show_map (void){
 void set_average (int x, int y){
 	double sum = 0.0;
 
-	for(int a = y - 1; a <= y + 1; a++){
- 		for(int b = x - 1; b <=x + 1; b++){
+	for(int b = y-1; b <= y+1; b++){
+ 		for(int a = x-1; a <= x+1; a++){
 			sum += get_map_value(a,b);
 		}
 	}
