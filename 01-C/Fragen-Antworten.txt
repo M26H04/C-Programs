@@ -15,8 +15,8 @@ Was fällt Ihnen bezüglich der drei Größen auf?
 
 Antwort2:
 Die Ausgaben sind 
-ls -lh archiv/zufall		-rw------- 1 wege hr-2526 256K Oct 15 17:57 archiv/zufall
-ls -ldh archiv			drwx------ 2 wege hr-2526 3 Oct 15 17:57 archiv
+ls -lh archiv/zufall	-rw------- 1 wege hr-2526 256K Oct 15 17:57 archiv/zufall
+ls -ldh archiv			drwx------ 2 wege hr-2526 3    Oct 15 17:57 archiv
 ls -ldh archiv.tar		-rw------- 1 wege hr-2526 260K Oct 15 17:58 archiv.tar
 
 Dabei stehen die -rw------- für Berechtigungen auf der Datei. Das erste Symbol, hier meist ein - , zeigt dass es sich um eine Datei handelt, (d entsprechend für directory bei 'archiv').

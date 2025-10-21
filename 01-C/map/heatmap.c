@@ -2,13 +2,13 @@
 #include <stdbool.h>
 
 // Definieren Sie ein 3x3-Array Namens map, das Werte vom Typ double enthält
-const int X = 3;
-const int Y = 3;
-// static double map[X][Y];
+const int MAP_SIZE_X = 3;
+const int MAP_SIZE_Y = 3;
+// static double map[MAP_SIZE_X][MAP_SIZE_Y];
 static double map[3][3];
 
 bool valid_map(int x, int y){
-	return (x >= 0 && x < X && y >= 0 && y < Y);
+	return (x >= 0 && x < MAP_SIZE_X && y >= 0 && y < MAP_SIZE_Y);
 }
 
 double get_map_value(int x, int y){
@@ -29,8 +29,8 @@ void set_temperature (int x, int y, double temperature){
 
 // Die Funktion show_map soll das Array in Form einer 3x3-Matrix ausgeben
 void show_map (void){
-	for(int y = (Y-1); y >= 0; y-- ){
-		for(int x = 0; x <= (X-1); x++){
+	for(int y = (MAP_SIZE_Y-1); y >= 0; y-- ){
+		for(int x = 0; x <= (MAP_SIZE_X-1); x++){
 			printf("%.2lf\t", map[x][y]);
 		}
 		printf("\n");
