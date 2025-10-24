@@ -1,0 +1,37 @@
+Frage1:
+Mit which können Sie sich den Pfad einer Anwendung anzeigen lassen.
+Warum funktioniert das nicht für das Kommando cd (Tipp man bash)?
+
+Antwort1:
+Der Befehl 'which bash' ergibt '/bin/bash', waehrend 'which cd' keine Ausgabe liefert.
+Dies liegt primär daran, dass der befehl 'cd' ein in der shell eigebauter (shell buildin) Befehl ist, waehrend 'bash' dagegen ein externer Befehl über ein weiteres Program (executable) ist.
+Somit ist cd vordefiniert und kein Program, weshalb sich auch nichts finden laesst.
+
+Dies kann ansonsten auch ueber den Befehl 'type' angezeigt werden, sodass 'type bash' als Ausgabe 'bash is /bin/bash' und 'type cd' als Ausgabe 'cd is a shell builtin' ergeben.
+
+
+Frage2: 
+Was fällt Ihnen bezüglich der drei Größen auf?
+
+Antwort2:
+Die Ausgaben sind 
+ls -lh archiv/zufall	-rw------- 1 wege hr-2526 256K Oct 15 17:57 archiv/zufall
+ls -ldh archiv			drwx------ 2 wege hr-2526 3    Oct 15 17:57 archiv
+ls -ldh archiv.tar		-rw------- 1 wege hr-2526 260K Oct 15 17:58 archiv.tar
+
+Dabei stehen die -rw------- für Berechtigungen auf der Datei. Das erste Symbol, hier meist ein - , zeigt dass es sich um eine Datei handelt, (d entsprechend für directory bei 'archiv').
+die naechsten drei Sybmole werden gegebenenfalls als rwx fuer read (r), write (w), execute (x) dargestellt.
+Fuer die Datei zufall bedeutet dies, ich als ersteller habe rw- also Lese- und Schreibezugriff, kann sie jedoch nicht ausfuehren. Sowohl die Gruppe, als auch alle anderen haben jedoch keinerlei Berechtigungen auf dieser Datei (---).
+
+Besonders auffaellig ist dabei, dass 'archiv' (als ein Ordner) zusaetzlich die Permission x hat, also ausfuehrbar ist (meine Vermutung ist, dass sich der Ordner sonst nicht oeffnen lassen wuerde).
+Bezueglich der Groesse faellt auf, dass 'zufall' 256K und 'archiv' 3 (K?) gross sind. Inuitiv haette ich entsprechend erwarted, dass 'archiv.tar' 256K + 3 = 259K und nicht 260K gross waere. Meine Vermutung ist, dass die Datei 'zufall' durch den Befehl 'dd if=/dev/urandom of=archiv/zufall bs=1k count=256' so angelegt wurde, dass sie sich schlecht bis garnicht komprimieren laesst. Da nun aber trotzdem der Komprimierdurchgang angewendet wurde, muss dennoch zusaetzliche Information (z.B. die Methode oder Version) vom Komprimieren mit gespeichert werden, sodass sich der zusaetzliche 1K ergibt.
+
+
+Frage3:
+Frage: Ist es möglich, ein gepacktes Archiv (.tar.gz) mit einem Aufruf von
+tar zu erzeugen? Wie hätte dieser Aufruf lauten müssen?
+
+Antwort3:
+Ja es ware möglich gewesen, indem man den Befehl zu 'tar -czf archiv.tar.gz archiv' geaendert haette, da -z laut 'tar --help' 'filter the archive through gzip' bedeutet, was wir ansosten in einem weiteren Schritt getan hatten.
+(tar -tzf archiv.tar.gz)
+
