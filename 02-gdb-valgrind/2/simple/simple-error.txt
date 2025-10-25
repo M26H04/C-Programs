@@ -1,0 +1,87 @@
+Funktion mistakes1():
+    Der Fehler liegt in Zeile 10 und 11.
+    "int buf[] = {1, 1, 2, 3, 4, 5};" ist ein lokal erstelletes Array, das auf dem
+    Stack, einem temporären Speicher, der Funktion liegt. Beim Verlassen der Funktion 
+    in Zeile 11 über "return buf;" wird dieser Stackframe aufgelöst. Die Methode gibt
+    aber einen Zeiger auf das Array im Stack zurück, welches nicht mehr existiert.
+    Beim Aufruf der Funktion in Zeile 49 bekommt p[0] den entsoprechenden Zeiger, was
+    zum Fehler führt.
+    
+    Lösung: 
+    Es wird Speicher mit malloc allokiert, in dem die Werte des Arrays buf eingetragen
+    werden. Diese befinden sich dann auf dem Heap und sind somit auch außerhalb der
+    Funktion zugänglich. Mit "free(p[0] - 1);" in Zeile 60 wird der Speicher wieder 
+    freigegeben.
+
+Funktion mistakes2():
+    Zeile 15:
+        "int *buf = malloc(sizeof(char) * 4);" allokiert zu wenig Speicher bzw. insgesamt
+        4 Byte (1 Byte * 4). Dies reicht für genau ein int. Es soll jedoch ein Array von 
+        vier Integern gespeichert werden.
+    Zeile 16:
+        "buf[2] = 2;" legt einen Wert außerhalb der allokierten Speichers und somit im
+        Stack an. Damit ist der Wert nur innerhalb der Funktion zugänglich.
+    Zeile 17 und 43:
+        Es wird der Zeiger von buf zurückgeben. Der gesuchte Wert ist allerdings im Stack
+        und nicht erreichbar.
+
+    Lösung:
+    Mit "int *buf = malloc(sizeof(int) * 4);" genügend Speicher im Heap allokieren.
+    Damit ist "buf[1] = 2;" im Heap und in der main() aufrufbar. Mit "free(p[1] - 1);" 
+    in Zeile 61 wird der Speicher wieder freigegeben.
+
+Funktion mistakes3():
+    Zeile 22:
+        Initialisiertes mistakes2_ wird nicht weiter verwendet.
+    Zeile 23:
+        "&mistakes2" ist der Zeiger auf die Funktion mistakes2(). Mit "(int *)" soll der 
+        Zeiger auf ein int-Array gecastet werden.
+    Zeile 24:
+        Der Funktionszeiger wird wie ein Zeiger auf ein int-Array genutzt, wo der erste 
+        Eintrag mit 3 überschrieben werden soll: "buf[0] = 3;".
+    Zeile 25 und 43:
+        Es wird der Funktionszeiger übergeben. Es soll nur der Zeiger auf ein Element in 
+        des int-Arrays verwendet werden.
+    
+    Lösung:
+    Mit "int *buf = mistakes2();" den Zeiger des int-Arrays übergeben. Da er sich im Heap 
+    befindet, kann auf ihn mit "buf[mistakes2_] = 3;" geschrieben werden. 
+    Mit "return buf + mistakes2_;" wird der Zeiger auf das gesuchte, dritte Element,
+    zurückgegeben.
+
+
+Funktion mistake4():
+    Zeile 29:
+        "int *buf = malloc(sizeof(char) * 4);" allokiert zu wenig Speicher bzw. insgesamt
+        4 Byte (1 Byte * 4). Dies reicht für genau ein int. Es soll jedoch ein Array von 
+        fünf Integern gespeichert werden.
+    Zeile 30:
+        Mit "free(buf);" wird der allokierte Speicher innerhalb der Funktion wieder
+        freigegeben und ist deshalb in der main Methode nicht mehr erreichbar.
+    Zeile 31 und 43:
+        Es wird der Zeiger auf das int-Array zurückgegeben. Gesucht ist aber das fünfte
+        Element in dem Array.
+    
+    Lösung:
+    Mit "int *buf = malloc(sizeof(int) * 5);" genügend Speicher im Heap allokieren.
+    "free(buf);" entfernen. Mit "return &buf[4];" den Zeiger auf das fünfte Element im 
+    Array zurückgeben.
+
+Funktion mistake5():
+    Zeile 36:
+        Die Größe eines Integers ist System- bzw. Architekturabhängig.
+        Durch das Angeben von "int *buf = malloc(4 * 5);" wird dies nicht 
+        berücksichtigt.
+    Zeile 37:
+        In "buf[44] = 5;" wird das 45. Element überschrieben. Gesucht ist das vierte.
+    Zeile 38 und 43:
+        "return buf" gibt einen Zeiger auf einen allokierten Speicher zurück, der 
+        nicht ausreichen könnte.
+    
+    Lösung:
+    Mit "int *buf = malloc(sizeof(int) * 5);" den Speicher für ein int-Array allokieren.
+    Mit "buf[4] = 5;" das fünfte Element überschreiben.
+
+Allokierten Speicher freigeben:
+    Zeile 60 bis 64 im korrigierten Code. Es wird jeweils der Zeiger eines allokierten
+    Speichers genutzt, um jenen freizugeben.

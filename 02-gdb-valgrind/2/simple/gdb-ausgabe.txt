@@ -1,0 +1,51 @@
+(gdb) break *mistakes1
+Breakpoint 1 at 0x401160: file simple.c, line 10.
+(gdb) run
+Starting program: /home/zakowski/Uebungsaufgaben/02-gdb-valgrind/simple/simple
+
+Breakpoint 1, mistakes1 () at simple.c:10
+(gdb) print buf
+$1 = {0, 0, 0, 0, 0, 0}
+(gdb) print buf[2]
+$2 = 0
+(gdb) next
+(gdb) print buf
+$3 = {1, 1, 2, 3, 4, 5}
+(gdb) print buf[2]
+$4 = 2
+(gdb) ptype buf
+type = int [6]
+(gdb) break *mistakes2
+Breakpoint 2 at 0x401146: file simple.c, line 14.
+(gdb) continue
+Continuing.
+
+Breakpoint 2, mistakes2 () at simple.c:14
+(gdb) ptype buf
+type = int *
+(gdb) continue
+Continuing.
+
+Program received signal SIGSEGV, Segmentation fault.
+mistakes3 () at simple.c:24
+(gdb) list
+19
+20      int *mistakes3(void) {
+21        /* In dieser Funktion darf kein Speicher direkt d.h. explizit allokiert werden. */
+22        int mistakes2_ = 0;
+23        int *buf = (int *)&mistakes2;
+24        buf[0] = 3;
+25        return buf;
+26      }
+27
+28      int *mistakes4(void) {
+(gdb) backtrace
+#0  mistakes3 () at simple.c:24
+#1  0x0000000000401219 in main () at simple.c:43
+(gdb) frame 1
+#1  0x0000000000401219 in main () at simple.c:43
+43        int *p[5] = {&mistakes1()[1], &mistakes2()[1], mistakes3(), mistakes4(), mistakes5()+4};
+(gdb) print p
+$1 = {0x4, 0x4052a4, 0xc2, 0x7fffffff7ea7, 0x7fffffff7ea6}
+(gdb) call *mistakes4()
+$2 = 0

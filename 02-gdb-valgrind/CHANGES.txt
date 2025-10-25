@@ -1,0 +1,83 @@
+CHANGES since first modification
+================================
+Datum: (fortlaufend während Session)
+Kurz: Zusammenfassung aller vorgenommenen Änderungen und Begründungen.
+
+1) partdiff-seq.c
+   - Entferntes <malloc.h> und stattdessen <stddef.h> in Header (partdiff-seq.h).
+     Grund: <malloc.h> ist veraltet und portabler Ersatz ist stdlib/stddef.
+   - h korrekt als double berechnet: h = 1.0 / (double)N; mit Schutz gegen N==0.
+     Grund: Korrekte Fließkommadivision; verhindert Division durch 0.
+   - Matrix-Allokation: M mit calloc allozieren (M = calloc(...)), explizite sizeof-Ausdrücke.
+     Grund: calloc initialisiert auf 0; bessere Fehlerprüfung auf NULL.
+   - Matrix-Pointer-Indexierung beibehalten, jedoch allokations- und sizeof-Ausdrücke lesbarer gemacht.
+   - Fehler in "star"-Indexierung korrigiert (konsistente Zugriffe Matrix[m2][row][col]).
+     Grund: Ursprünglich vertauschte Indizes führten zu falschen Werten/undefiniertem Verhalten.
+   - Absolutwert mit fabs() ersetzt statt manueller Negation.
+     Grund: Klarer, korrekt für double.
+   - displayStatistics: Zeitdifferenz mit difftime() berechnet und mit "%.0f" ausgegeben.
+     Grund: Vermeidet Format-Warnungen bei printf; portable Zeitberechnung.
+   - Vorwärtsdeklaration von DisplayMatrix ergänzt und Aufruf geschützt (NULL-Checks).
+     Grund: Vermeidet implizite Deklarations-Warnungen und Abstürze, falls Matrix nicht allokiert.
+   - freeMatrices: Pointer nach free() auf NULL gesetzt.
+     Grund: Schutz gegen double-free bei mehrfacher Freigabe.
+   - errorQuit: Signatur auf void angepasst (wie implementiert).
+     Grund: Konsistenz zwischen Deklaration und Definition.
+
+2) displaymatrix.c
+   - Signaturen auf const-correctness angepasst:
+     DisplayMatrix(const char *s, const double *v, int interlines)
+     DisplayMatrixAddr(const char *s, double ***v, int interlines, int matrixnum)
+     Grund: Funktion verändert das Buffer nicht; const kommuniziert das.
+   - NULL-Checks für v und v[matrixnum] eingefügt; Dateizeiger (fopen) auf NULL geprüft.
+     Grund: Verhindert Abstürze bei ungültigen Pointern oder fehlender Schreibberechtigung.
+   - Indexberechnung explizit gemacht (size_t idx, Schritt = interlines+1).
+     Grund: Klarere, sichere Indexbildung; vermeidet Verwirrung bei Multiplikationen.
+   - fopen Fehler mit perror gemeldet statt stumm zu fehlschlagen.
+     Grund: Besseres Fehlerreporting.
+
+3) partdiff-seq.h
+   - Header-Guard hinzugefügt (#ifndef PARTDIFF_SEQ_H ... #endif).
+     Grund: Verhindert Mehrfach-Inklusion.
+   - <malloc.h> entfernt, <stddef.h> eingefügt.
+   - Prototypen angepasst:
+     DisplayMatrix und DisplayMatrixAddr sind const-correct; errorQuit(void).
+     Grund: Konsistenz mit Implementierungen.
+
+4) askparams.c
+   - Interaktive Eingaben (scanf) auf Rückgabewert geprüft:
+     if (scanf("%d", method) != 1) { fprintf(stderr, "..."); exit(1); }
+     Gleiches für interlines, func, termination, term_precision, term_iteration.
+     Grund: Vermeidet Compiler-Warnungen "ignoring return value" und macht Eingabe robust.
+   - Kommandozeilen-Parsing: sscanf Aufrufe geprüft (sscanf(...) != 1 -> Fehlermeldung + exit).
+     Grund: Robustere Fehlerbehandlung bei fehlerhaften Kommandozeilenparametern.
+   - Entfernung versehentlicher '+/-' Artefakte (die vorher Syntaxfehler erzeugten).
+     Grund: Beseitigt Compiler-Fehler wie "expected expression before 'if'".
+   - Hinweis: Falls interaktive Robustheit gewünscht ist, wäre fgets+strtol/strtod sinnvoller (verwendbar als nächster Schritt).
+
+Warum diese Änderungen?
+-----------------------
+- Ziel war minimal-invasive, sichere Fehlerbehebungen: keine Algorithmusänderungen, nur
+  - Speicher-/Allokationssicherheit (calloc, NULL-Checks, free+NULL),
+  - Format-/IO-Warnungen beheben (scanf/sscanf Return-Value, difftime),
+  - Typsicherheit/const-correctness und Header-Guards,
+  - Behebung einer offensichtlichen Index-Vertauschung bei star-Berechnung.
+
+Hinweise zum Build & Testing
+----------------------------
+1. Ausführen: make
+2. Bei weiteren Compiler-Warnungen bitte komplettes make-Output bereitstellen; ich passe gezielt an.
+3. Für Runtime-Checks empfehle valgrind:
+   valgrind --leak-check=full ./partdiff <params>
+   -> Prüfe noch auf verbliebene Memory-Leaks oder ungültige Lese-/Schreibzugriffe.
+4. Optional (Verbesserungsvorschläge):
+   - Interaktive Eingabe robuster: fgets + strtol/strtod (wiederholte Eingabe bei Fehler).
+   - Reduktion von Global-Variablen (bessere Testbarkeit).
+   - Verifikation numerischer Ergebnisse gegen bekannte Testfälle.
+
+Wenn du möchtest
+----------------
+- Erstelle ich zusätzliche Änderungen: ersetze scanf durch fgets+strto*, erweitere valgrind-Checks,
+  oder führe weitere Codeaufräumungen (z. B. const überall, static functions) durch.
+
+Ende der Zusammenfassung.
