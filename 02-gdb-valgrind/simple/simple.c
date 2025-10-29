@@ -8,7 +8,12 @@
 
 int *mistakes1(void) {
   int *buf = malloc(sizeof(int) * 6);
-  buf = (int[]) {1, 1, 2, 3, 4, 5};
+  buf[0] = 1;
+  buf[1] = 1;
+  buf[2] = 2;
+  buf[3] = 3;
+  buf[4] = 4;
+  buf[5] = 5;
   return buf;
 }
 
@@ -20,9 +25,7 @@ int *mistakes2(void) {
 
 int *mistakes3(void) {
   /* In dieser Funktion darf kein Speicher direkt d.h. explizit allokiert werden. */
-  //int mistakes2_ = 0;
-  //int *buf = (int *)&mistakes2;
-  static int buf[1];
+  int *buf = mistakes2();
   buf[0] = 3;
   return buf;
 }
@@ -34,7 +37,7 @@ int *mistakes4(void) {
 }
 
 int *mistakes5(void) {
-  int *buf = malloc(4 * 5);
+  int *buf = malloc(sizeof(int) * 5);
   buf[4] = 5;
   return buf;
 }
@@ -53,8 +56,8 @@ int main(void) {
   /* Fügen sie hier die korrekten aufrufe von free() ein */
   free(p[0] -1);
   free(p[1] -1);
-  //free(p[2] -1);
-  free(p[3]-1);
+  free(p[2]);
+  free(p[3]);
   free(p[4]-4);
 
   return 0;
