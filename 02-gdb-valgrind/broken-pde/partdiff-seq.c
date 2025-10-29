@@ -68,7 +68,7 @@ void initVariables(void) {
 void allocateMatrices(void) {
   int i, j; /* local variables */
 
-  Matrix = (double ***)calloc(2, sizeof(char **)); /* allocate memory */
+  Matrix = (double ***)calloc(2, sizeof(double **)); /* allocate memory */ // Change ...sizeof(char **)... to ...sizeof(double **)...
   if (Matrix == 0) {
     errorQuit();
   } /* quit if error   */
@@ -85,7 +85,7 @@ void allocateMatrices(void) {
     errorQuit();
   } /* quit if error   */
 
-  M = malloc(sizeof(double) * (N + 1) * (N - 1) * 2); /* allocate memory */
+  M = malloc(sizeof(double) * (N + 1) * (N + 1) * 2); /* allocate memory */ //Change ...(N - 1)... to ...(N + 1)...
   if (M == 0) {
     errorQuit();
   } /* quit if error   */
@@ -152,6 +152,7 @@ void freeMatrices(void) {
     free(Matrix[1]);
   if (Matrix[0] != 0)
     free(Matrix[0]);
+  free(Matrix);     // Change free(Matrix); from Start to End of methode
 }
 
 /* ************************************************************************ */
@@ -202,7 +203,7 @@ void calculate(void) {
     {                         /*                   */
       for (i = 1; i < N; i++) /* over all rows  */
       {
-        star = -Matrix[m2][i - 1][j] - Matrix[j - 1][m2][i] +
+        star = -Matrix[m2][i - 1][j] - Matrix[i - 1][m2][j] +   // Change ...-Matrix[j - 1][m2][i]... to ...-Matrix[i - 1][m2][j]...
                4 * Matrix[m2][i][j] - Matrix[m2][i][j + 1] -
                Matrix[m2][i + 1][j];
 
