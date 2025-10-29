@@ -147,7 +147,7 @@ void initMatrices(void) {
 /* freeMatrices: frees memory for matrices                                  */
 /* ************************************************************************ */
 void freeMatrices(void) {
-  free(Matrix);
+//  free(); // Something missing here?
   if (Matrix[1] != 0)
     free(Matrix[1]);
   if (Matrix[0] != 0)
