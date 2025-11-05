@@ -6,6 +6,7 @@
 #SBATCH --ntasks-per-node=5
 #SBATCH --ntasks=25
 
+# Setze feste Partition (west)
 #SBATCH --partition=west
 
 # All output into print_output.out
