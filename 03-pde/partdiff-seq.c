@@ -105,7 +105,7 @@ static void allocateMatrices(struct calculation_arguments* arguments)
     arguments->M = allocateMemory(arguments->num_matrices * (N + 1) * (N + 1) * sizeof(double));
     arguments->Matrix = allocateMemory(arguments->num_matrices * sizeof(double**));
 
-    for (i = 0; i <= arguments->num_matrices; i++) {
+    for (i = 0; i <= arguments->num_matrices; i++) { // < or <=
         arguments->Matrix[i] = allocateMemory((N + 1) * sizeof(double*));
 
         for (j = 0; j <= N; j++) {
@@ -153,30 +153,28 @@ static void initMatrices(struct calculation_arguments* arguments, struct options
 /* ************************************************************************ */
 double getResiduum(struct calculation_arguments* arguments, struct options* options, int x, int y, double star)
 {
-    double* result = malloc(sizeof(double));
     if (options->inf_func == FUNC_F0) {
-        *result = ((-star) / 4.0);
-        return *result;
+        return ((-star) * 0.25);
     } else {
-        *result = ((TWO_PI_SQUARE * sin((double)(y)*PI * arguments->h) * sin((double)(x)*PI * arguments->h)
-                           * arguments->h * arguments->h
-                       - star)
-            / 4.0);
-        return *result;
+        return ((TWO_PI_SQUARE * 
+                sin((double)(y)*PI * arguments->h) * 
+                sin((double)(x)*PI * arguments->h) * 
+                arguments->h * 
+                arguments->h - star) 
+            * 0.25);
     }
 }
-
 /* ************************************************************************ */
 /* calculate: solves the equation                                           */
 /* ************************************************************************ */
 static void calculate(
     struct calculation_arguments* arguments, struct calculation_results* results, struct options* options)
 {
-    int i, j; /* local variables for loops  */
-    int m1, m2; /* used as indices for old and new matrices       */
+    int i, j; /* local variables for loops */
+    int m1, m2; /* used as indices for old and new matrices */
     double star; /* four times center value minus 4 neigh.b values */
     double korrektur;
-    double residuum; /* residuum of current iteration                  */
+    double residuum; /* residuum of current iteration */
 
     int N = arguments->N;
     double*** Matrix = arguments->Matrix;
@@ -191,20 +189,29 @@ static void calculate(
     }
 
     while (options->term_iteration > 0) {
+        results->stat_precision = 0.0;
 
         /* over all rows */
-        for (j = 1; j < N; j++) {
+        for (i = 1; i < N; i++) {
             /* over all columns */
-            for (i = 1; i < N; i++) {
-                if (i == 1 && j == 1) {
-                    results->stat_precision = 0;
-                }
-                star = -Matrix[m2][i - 1][j] - Matrix[m2][i][j - 1] - Matrix[m2][i][j + 1] - Matrix[m2][i + 1][j]
+            for (j = 1; j < N; j++) {
+                star =  - Matrix[m2][i - 1][j] 
+                        - Matrix[m2][i + 1][j]
+                        - Matrix[m2][i][j - 1] 
+                        - Matrix[m2][i][j + 1]  
                     + 4.0 * Matrix[m2][i][j];
 
-                residuum = getResiduum(arguments, options, i, j, star);
-                korrektur = residuum;
-                residuum = (residuum < 0) ? -residuum : residuum;
+                // residuum = fabs(getResiduum(arguments, options, i, j));
+                if (options->inf_func == FUNC_F0) {
+                    korrektur = ((-star) * 0.25);
+                } else {
+                    korrektur = ((TWO_PI_SQUARE * 
+                                sin((double)(y)*PI * arguments->h) * 
+                                sin((double)(x)*PI * arguments->h) * 
+                                arguments->h * arguments->h - star) * 
+                            0.25);
+                }
+                residuum = (korrektur < 0) ? -korrektur : korrektur;
                 results->stat_precision = (residuum < results->stat_precision) ? results->stat_precision : residuum;
 
                 Matrix[m1][i][j] = Matrix[m2][i][j] + korrektur;
