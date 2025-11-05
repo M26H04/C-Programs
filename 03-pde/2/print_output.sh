@@ -1,6 +1,0 @@
-#!/bin/bash
-
-HOSTNAME=$(hostname --short)
-TIMESTAMP=$(date --iso-8601=ns)
-
-echo "$HOSTNAME // $TIMESTAMP"
