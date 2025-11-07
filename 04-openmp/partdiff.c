@@ -194,8 +194,7 @@ static void calculate(struct calculation_arguments const *arguments,
 
     maxResiduum = 0;
 
-    // WIP
-    #pragma omp parallel if(options->method == METH_JACOBI) default(none) 
+    #pragma omp parallel for if(options->method == METH_JACOBI) num_threads(options->number)
     /* over all rows */
     for (i = 1; i < N; i++) {
       double fpisin_i = 0.0;
