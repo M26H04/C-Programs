@@ -34,18 +34,40 @@ int main(int argc, char *argv[]){
   // Send and Receive messages
   if(size == 1){
     printf("%s\n", output);
+    printf("[%d] Kleinster MS-Anteil: %d\n", rank, micro_sec);
+    printf("[%d] Größte Differenz:: 0\n", rank);
   }
   else if(rank < size-1){
-      MPI_Send(output, 80, MPI_BYTE, size-1, rank, MPI_COMM_WORLD);
+    MPI_Send(&output, 80, MPI_CHAR, size-1, rank, MPI_COMM_WORLD);
+    MPI_Send(&micro_sec, 1, MPI_INT, size-1, rank+1000, MPI_COMM_WORLD);
   }
   else if (rank == size-1){
-      for(int i = 0; i < size-1; i++){
-          MPI_Recv(output, 80, MPI_BYTE, i, i, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-          printf("%s\n", output);
+    char outP[80];
+    int ms[size-1];
+    for(int i = 0; i < size-1; i++){
+      MPI_Recv(outP, 80, MPI_CHAR, i, i, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      MPI_Recv(&ms[i], 1, MPI_INT, i, i+1000, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      
+      printf("%s\n", outP);
+    }
+
+    // Berechene Zeitunterschiede
+    int msMax = ms[0];
+    int msMin = ms[0];
+    for(int i = 1; i < size-1; i++){
+      if(ms[i] < msMin){
+        msMin = ms[i];
       }
+      else if(ms[i] > msMax){
+        msMax = ms[i];
+      }
+    }
+    int diff = msMax - msMin;
+    printf("[%d] Kleinster MS-Anteil: %d\n", rank, msMin);
+    printf("[%d] Größte Differenz:: %d\n", rank, diff);
   }
 
-  MPI_Barrier(MPI_COMM_WORLD); // Warte auf alle Prozesse
+  MPI_Barrier(MPI_COMM_WORLD); // Warte auf alle Prozesse (Funktioniert nicht für printf?)
   printf("[%d] beendet jetzt!\n", rank); // Schreibe Prozess-Ende
 
   MPI_Finalize(); //Beendet MPI
