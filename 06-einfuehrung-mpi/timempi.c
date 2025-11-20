@@ -31,18 +31,18 @@ int main(int argc, char *argv[]){
   strftime(time_string, 30, "%Y-%m-%d %T", localtime(&current_time));
   snprintf(output, 80, "[%d] %s // %s.%d", rank, hostname, time_string, micro_sec);
 
-  // Send and Recive messages
+  // Send and Receive messages
   if(size == 1){
     printf("%s\n", output);
   }
   else if(rank < size-1){
-    MPI_Send(output, 80, MPI_BYTE, size-1, size-1, MPI_COMM_WORLD);
+      MPI_Send(output, 80, MPI_BYTE, size-1, rank, MPI_COMM_WORLD);
   }
   else if (rank == size-1){
-    for(int i = 0; i < size-1; i++){
-      MPI_Recv(output, 80, MPI_BYTE, i, i, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      printf("%s\n", output);
-    }
+      for(int i = 0; i < size-1; i++){
+          MPI_Recv(output, 80, MPI_BYTE, i, i, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+          printf("%s\n", output);
+      }
   }
 
   MPI_Barrier(MPI_COMM_WORLD); // Warte auf alle Prozesse
