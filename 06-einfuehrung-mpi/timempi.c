@@ -34,18 +34,14 @@ int main(int argc, char *argv[]){
   // Send and Recive messages
   if(size == 1){
     printf("%s\n", output);
-    //printf("%d\n", micro_sec);
   }
   else if(rank < size-1){
-    MPI_Send(&output, 80, MPI_BYTE, size-1, 0, MPI_COMM_WORLD);
-    MPI_Send(&micro_sec, 1, MPI_INT, size-1, 0, MPI_COMM_WORLD);
+    MPI_Send(output, 80, MPI_BYTE, size-1, size-1, MPI_COMM_WORLD);
   }
   else if (rank == size-1){
     for(int i = 0; i < size-1; i++){
-      MPI_Recv(&output, 80, MPI_BYTE, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      MPI_Recv(&micro_sec, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      MPI_Recv(output, 80, MPI_BYTE, i, i, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
       printf("%s\n", output);
-      //printf("%d\n", micro_sec);
     }
   }
 
