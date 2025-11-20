@@ -32,16 +32,25 @@ int main(int argc, char *argv[]){
   snprintf(output, 80, "[%d] %s // %s.%d", rank, hostname, time_string, micro_sec);
 
   // Send and Recive messages
-  if(rank == 0){
-    MPI_Send(&output, 80, MPI_BYTE, 1, 0, MPI_COMM_WORLD);
-    MPI_Send(&micro_sec, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);
-  }
-  else if (rank == 1){
-    MPI_Recv(&output, 80, MPI_BYTE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    MPI_Recv(&micro_sec, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+  if(size == 1){
     printf("%s\n", output);
-    printf("%d\n", micro_sec);
+    //printf("%d\n", micro_sec);
   }
+  else if(rank < size-1){
+    MPI_Send(&output, 80, MPI_BYTE, size-1, 0, MPI_COMM_WORLD);
+    MPI_Send(&micro_sec, 1, MPI_INT, size-1, 0, MPI_COMM_WORLD);
+  }
+  else if (rank == size-1){
+    for(int i = 0; i < size-1; i++){
+      MPI_Recv(&output, 80, MPI_BYTE, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      MPI_Recv(&micro_sec, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      printf("%s\n", output);
+      //printf("%d\n", micro_sec);
+    }
+  }
+
+  MPI_Barrier(MPI_COMM_WORLD); // Warte auf alle Prozesse
+  printf("[%d] beendet jetzt!\n", rank); // Schreibe Prozess-Ende
 
   MPI_Finalize(); //Beendet MPI
   return 0;
