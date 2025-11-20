@@ -31,10 +31,18 @@ int main(int argc, char *argv[]){
   strftime(time_string, 30, "%Y-%m-%d %T", localtime(&current_time));
   snprintf(output, 80, "[%d] %s // %s.%d", rank, hostname, time_string, micro_sec);
 
-  printf("%s\n", output);
-  printf("%d\n", micro_sec);
+  // Send and Recive messages
+  if(rank == 0){
+    MPI_Send(&output, 80, MPI_BYTE, 1, 0, MPI_COMM_WORLD);
+    MPI_Send(&micro_sec, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);
+  }
+  else if (rank == 1){
+    MPI_Recv(&output, 80, MPI_BYTE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    MPI_Recv(&micro_sec, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    printf("%s\n", output);
+    printf("%d\n", micro_sec);
+  }
 
   MPI_Finalize(); //Beendet MPI
-  
   return 0;
 }
