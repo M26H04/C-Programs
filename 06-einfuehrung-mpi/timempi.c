@@ -1,5 +1,5 @@
 #define _DEFAULT_SOURCE
-// mpirun -np=4 ~/Uebungen/6/timempi.x
+// mpirun -np=10 ~/Uebungen/6/timempi.x
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
