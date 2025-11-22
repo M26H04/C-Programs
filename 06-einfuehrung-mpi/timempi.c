@@ -33,7 +33,7 @@ int main(int argc, char *argv[]){
 
   // Send and Receive messages
   if(size == 1){
-    printf("%s\n", output);
+    // printf("%s\n", output);
     printf("[%d] Kleinster MS-Anteil: %d\n", rank, micro_sec);
     printf("[%d] Größte Differenz:: 0\n", rank);
   }
