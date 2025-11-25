@@ -1,0 +1,8 @@
+Frage: Was fällt Ihnen auf? Versuchen Sie Ihre Beobachtung zu erklären!
+
+Die selbe output datei wird bei jeden Durchlauf überschrieben, es wird immer eine neue Datei erstellt. Die Zeilen werden direkt nach der Ausführung in die out Datei geschrieben nicht Knotenweise.
+
+Frage: Könnte man die Datei print_output.out auch innerhalb des Scriptes
+print_output.sh erzeugen? Falls ja: Wie? Falls nein: Warum nicht?
+
+Nein, es ist theoretisch möglich die print_output.out auch innerhalb des Scriptes print_output.sh zu erzeugen, allerdings wird dies nicht das erwartete Ergebnis erzeugen, da die Datei gegebendenfalls gelöscht und überschrieben wird.

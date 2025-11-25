@@ -1,0 +1,26 @@
+Frage: Was sind mögliche
+Konsequenzen, wenn -Ofast benutzt wird?
+
+0fast enabled aggressive Optimierung, welche gegebendenfalls standartmässig nicht unterstützt wird. Außerdem wird in gperf dann nicht mehr richtig alles angezeigtz.
+
+Um gprof benutzen zu können, passen Sie das Makefile an, um partdiff-seq mit
+der -pg-Option zu kompilieren und zu linken. Lassen Sie danach das Programm laufen,
+wird eine Datei gmon.out geschrieben. Rufen Sie jetzt gprof ./partdiff-seq auf,
+um sich die aufgezeichneten Daten anzusehen. Erläutern Sie die Ausgabe
+
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 85.53      4.22     4.22        1     4.22     4.75  calculate
+ 10.73      4.75     0.53 1077444000     0.00     0.00  getResiduum
+  3.74      4.94     0.18        1     0.18     0.18  initMatrices
+  0.00      4.94     0.00        4     0.00     0.00  allocateMemory
+  0.00      4.94     0.00        1     0.00     0.00  AskParams
+  0.00      4.94     0.00        1     0.00     0.00  DisplayMatrix
+  0.00      4.94     0.00        1     0.00     0.00  allocateMatrices
+
+Wir können hier unsere Funktionen sehen, und deren Zeitaufwand. Unteranderem kann der Gesamtanteil aller Funktionen eingesehen werden, wie oft sie aufgerufen wurden und Zeit pro Aufruf.
+
+

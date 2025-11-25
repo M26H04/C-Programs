@@ -1,0 +1,135 @@
+1. Was bedeutet der Begriff Batch Queuing im HPC-Bereich, welches Problem wird
+damit gelöst?
+
+Batch Queuing generell beschreibt die Ordnung und Zuteilung von Arbeitsprozessen bzw. Jobs auf einer limitierten Kapazität.
+Im HPC-Bereich bedeutet dies die Einteilung auf der zur verfuegungstehenden Rechenkapazitaet, in unserm Kontext also die Zuteilung von Rechenzeiten auf dem Hochleistungsrechner.
+Durch Batch Queuing wird somit versucht, Probleme der Zugaenglichkeit (Fairnes) zu regulieren. Somit soll verhindert werden, dass einzelne Jobs die ausfuehrung von andern Jobs
+(sowohl auf begrenzte als auch unbegrenzte Zeit) durch die eigene Ausfuehrung verhindert.
+
+
+
+2. Nennen Sie drei Beispiele für HPC-Batch-Queuing-Systeme.
+SLURM
+PBS / Torque
+LSF
+3. Welches Batch-Queuing-System wird auf dem WR-Cluster verwendet?
+
+SLURM
+
+
+4. Machen Sie sich mit der Manpage von sbatch vertraut. Beschreiben Sie die Funk-
+tionsweise des Kommandos.
+
+sbatch kann genutzt werden um sein script (mit Slurm) zur ausfuehrung von Jobs zu starten.
+So kann ein jobscript mpi.slurm mit dem Befehl "sbatch mpi.slurm" als Job gestartet und ausgefuehrt werden.
+
+
+
+5. Wie lassen sich die aktuellen Jobs und deren Status auf der Kommandozeile
+anzeigen?
+
+Über den Befehlt "smap".
+
+
+6. Machen Sie sich mit dem Befehl sview vertraut. Beschreiben Sie die wichtigsten
+Vorteile gegenüber dem vorigen Punkt.
+
+Sview biete weitere Optionen wie Einsicht in Partitions, Reservations, Burst Buffers und Visible Tabs, welche in smap so nicht dargestellt werden.
+Dafür ist der benoetigte Aufwand inproportional zum bisherigen Vorteil.
+ 
+7. Gibt es eine Möglichkeit, einen bereits abgeschickten Job zu löschen (bevor oder
+während er läuft)? Wenn ja, wie?
+
+scancel <jobid>
+
+
+8. Finden Sie heraus wie Sie sich den detaillierten Status eines Jobs (seine Konfigu-
+ration) ausgeben lassen können.
+
+scontrol show job <JobID>
+
+9. Können auf dem Cluster mehrere Nutzer oder Jobs gleichzeitig denselben west-
+Knoten benutzen?
+
+Nein, normalerweise wird pro Knoten ein aktiver Job zugewiesen, die anderen Jobs müsssen in einer Queue warte.
+
+10. Welche Scheduling-Verfahren sind bei dem auf dem Cluster benutzten System
+möglich? Welches wird benutzt? Erläutern Sie jedes der Verfahren kurz.
+
+Mithilfe folgendem Command:
+
+scontrol show config | grep SchedulerType
+
+haben wir herausgefunden, dass das Backfilling-Verfahren verwendet wird.
+
+
+11. Finden Sie heraus, wie Sie einen einzelnen Knoten allokieren können.
+ Allokieren
+Sie gezielt einen bestimmten Knoten (z. B. west7), bauen Sie mittels ssh eine
+Verbindung zu diesem Knoten auf und führen sie hostname darauf aus.
+
+Mit
+
+salloc -w west6 -p west
+
+allokieren wir west 6.
+
+Mit 
+
+ssh west6 und hostname erhalten wird den hostname west6.
+
+
+
+
+12. Wie hoch ist das Zeitlimit auf dem Cluster, bis ein Knoten spätestens wieder
+freigegeben wird?
+
+Mit
+
+scontrol show partition west
+
+erhalten wir 
+
+PartitionName=west
+   AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL
+   AllocNodes=ALL Default=NO QoS=N/A
+   DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO GraceTime=0 Hidden=NO
+   MaxNodes=UNLIMITED MaxTime=06:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED
+   Nodes=west[1-10]
+   PriorityJobFactor=1 PriorityTier=1 RootOnly=NO ReqResv=NO OverSubscribe=EXCLUSIVE
+   OverTimeLimit=NONE PreemptMode=OFF
+   State=UP TotalCPUs=240 TotalNodes=10 SelectTypeParameters=NONE
+   JobDefaults=(null)
+   DefMemPerNode=UNLIMITED MaxMemPerNode=UNLIMITED
+
+Daraus ist eine Tmelimit, von 6 Stunden zu entnehmen.
+
+
+13. Wie können Sie die Priorität Ihrer Jobs nachschauen? Können Sie diese verändern
+oder beeinflussen?
+
+Mit 
+
+sprio -j <JobID> oder sprio -u $USER
+
+kann man sich die Prio ansehen, allerdings kann man die Prio nicht direkt beeinflussen, allerding kann man sich zum Beispiel die Partiotionen anschauen, und gucken wo welche  Jobs mit welchen Prios angucken und dann entscheiden wo ich meinen Job aufgebe.
+
+
+14. Welche unterschiedlichen Partitionen sind auf dem Cluster eingerichtet? Wie
+kann die zu benutzende Partition geändert werden?
+
+Mit
+
+ sinfo -s oder scontrol show partition
+
+kann man sich die Partitionen ansehen. Im Jobscript kann mnit #SBATCH -p kann man die Partition auswählen.
+
+PARTITION AVAIL  TIMELIMIT   NODES(A/I/O/T)  NODELIST
+amd          up    6:00:00          0/0/3/3  amd[2-4]
+magny        up    6:00:00          0/1/0/1  magny1
+nehalem      up    6:00:00          0/0/1/1  nehalem5
+west         up    6:00:00         3/7/0/10  west[1-10]
+
+
+
+
